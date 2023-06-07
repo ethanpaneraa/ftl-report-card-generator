@@ -76,6 +76,9 @@ const winterTerm = document.querySelector("#winter-term");
 const reportCardTable = document.querySelector("#report-card-table"); 
 const dropDownElem = document.querySelector(".dropdown"); 
 const dropDownElemButton = document.querySelector(".dropdown-button"); 
+const creditsEarned = document.querySelector("#student-total-credits"); 
+const SemesterGPAElement = document.querySelector("#student-semester-gpa"); 
+console.log(SemesterGPAElement); 
 // ADD more query selectors here
 
 /**
@@ -312,9 +315,9 @@ function addEventListeners(
   // Each callback function one should update the `semester` variable,
   // call the `updateReportCard` function, and close the dropdown
   dropdownButtonElement.addEventListener("click", () => {openDropdown(dropdownElement)}); 
-  fallSemesterElement.addEventListener("click", () => {semester = fallSemesterElement.innerHTML; updateReportCard(reportCardTableElement, semester); closeDropdown(dropdownElement)}); 
-  springSemesterElement.addEventListener("click", () => {semester = springSemesterElement.innerHTML; updateReportCard(reportCardTableElement, semester); closeDropdown(dropdownElement)}); 
-  winterTermElement.addEventListener("click", () => {semester = winterTermElement.innerHTML; updateReportCard(reportCardTableElement, semester); closeDropdown(dropdownElement)}); 
+  fallSemesterElement.addEventListener("click", () => {semester = fallSemesterElement.innerHTML; updateReportCard(reportCardTableElement, semester); closeDropdown(dropdownElement); calculateSemesterGpa(reportCardTableElement); addUpStudentCredits(reportCardTable)}); 
+  springSemesterElement.addEventListener("click", () => {semester = springSemesterElement.innerHTML; updateReportCard(reportCardTableElement, semester); closeDropdown(dropdownElement); calculateSemesterGpa(reportCardTableElement); addUpStudentCredits(reportCardTable)}); 
+  winterTermElement.addEventListener("click", () => {semester = winterTermElement.innerHTML; updateReportCard(reportCardTableElement, semester); closeDropdown(dropdownElement); calculateSemesterGpa(reportCardTableElement); addUpStudentCredits(reportCardTable)}); 
 
 
 
@@ -335,6 +338,12 @@ function addEventListeners(
  */
 function addUpStudentCredits(reportCardTableElement) {
   // code goes here
+  let totalCredits = 0; 
+  const allCredits = reportCardTableElement.getElementsByClassName("cred-col"); 
+  for (let i = 1; i < allCredits.length; i++) {
+    totalCredits += parseInt(allCredits[i].innerHTML); 
+  }
+  creditsEarned.innerHTML = totalCredits;   
 }
 
 /**
@@ -352,6 +361,19 @@ function addUpStudentCredits(reportCardTableElement) {
 
 function calculateSemesterGpa(reportCardTableElement) {
   // code goes here
+
+
+  SemesterGPAElement.innerHTML = ""; 
+  let gpaSum = 0; 
+  const allGrades = reportCardTableElement.getElementsByClassName("lett-col"); 
+  for (let i = 1; i < allGrades.length; i++) {
+    gpaSum = gpaPointsLookup[allGrades[i].innerHTML] + gpaSum;  
+  }
+
+  gpaSum = gpaSum / (allGrades.length - 1);
+  SemesterGPAElement.innerHTML = gpaSum; 
+  console.log("aqui"); 
+  
 }
 
 window.onload = function () {
@@ -359,4 +381,7 @@ window.onload = function () {
   populateStudentInfo(studentInformation); 
   updateReportCard(reportCardTable, semester); 
   addEventListeners(dropDownElem, dropDownElemButton, reportCardTable, fallSemester, springSemester, winterTerm)
+  addUpStudentCredits(reportCardTable); 
+  calculateSemesterGpa(reportCardTable); 
+  addUpStudentCredits(reportCardTable); 
 }
